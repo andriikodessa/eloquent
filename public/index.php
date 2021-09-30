@@ -3,116 +3,66 @@
 require_once '../vendor/autoload.php';
 require_once '../config/eloquent.php';
 
-use \Hillel\Models\Category;
-use Hillel\Models\Post;
-use Hillel\Models\Tag;
+$categories = [];
+for ($i =1; $i <= 5; $i++) {
+    $categories[] =  [
+        'title' => 'Category ' . $i,
+        'slug' => 'category ' . $i,
+        'created_at' => date('Y-m-d H-i-s'),
+        'updated_at' => date('Y-m-d H-i-s'),
+    ];
+}
 
-//$cat = Category::all();
-//
-//echo "<pre>";
-//var_dump($cat);
-//echo "<pre>";
+\Hillel\Models\Category::insert($categories);
 
-//$category1 = new Category;
-//$category1->title = 'Title1';
-//$category1->slug = 'Slug1';
-//$category1->save();
-//
-//$category2 = new Category;
-//$category2->title = 'Title2';
-//$category2->slug = 'Slug2';
-//$category2->save();
-//
-//$category3 = new Category;
-//$category3->title = 'Title3';
-//$category3->slug = 'Slug3';
-//$category3->save();
-//
-//$category4 = new Category;
-//$category4->title = 'Title4';
-//$category4->slug = 'Slug4';
-//$category4->save();
-//
-//$category5 = new Category;
-//$category5->title = 'Title5';
-//$category5->slug = 'Slug5';
-//$category5->save();
+$category = \Hillel\Models\Category::inRandomOrder()->first();
+$category->title = 'Category-Uodate';
+$category->slug = 'Slug-Update';
+$category->save();
 
-//$category = Category::find(9);
-//$category->title = 'Titletitle';
-//$category->slug = 'Slugslug';
-//$category->save();
+\Hillel\Models\Category::inRandomOrder()->first()->delete();
 
-//$category = Category::find(8);
-//$category ->delete(8);
+$categories = \Hillel\Models\Category::all();
 
-//$category = Category::find(27);
-//$category->title = 'Titletitle';
-//$category->slug = 'Slugslug';
-//$category->save();
+$posts = [];
+for ($i =1; $i <= 10; $i++) {
+    $posts[] =  [
+        'title' => 'Post ' . $i,
+        'slug' => 'post ' . $i,
+        'body' => 'post-body ' . $i,
+        'category_id' => $categories->random()->id,
+        'created_at' => date('Y-m-d H-i-s'),
+        'updated_at' => date('Y-m-d H-i-s'),
+    ];
+}
 
-//$category = Category::find(26);
-//$category->delete(26);
+\Hillel\Models\Post::insert($posts);
 
-//$dataPost = [
-//    'title' => 'Title10',
-//    'slug' => 'Slug10',
-//    'body' => 'Body10',
-//    'category_id' => '27'
-//];
-//
-//$post = Post:: create($dataPost);
+$post = \Hillel\Models\Post::inRandomOrder()->first();
+$post->title = 'Post-Uodate';
+$post->slug = 'Post-Slug-Update';
+$post->save();
 
-//$updatepost = Post::find(5);
-//$updatepost->title = 'Titletitle';
-//$updatepost->slug = 'Slugslug';
-//$updatepost->body = 'Bodybody';
-//$updatepost->category_id = '25';
-//$updatepost->save();
+\Hillel\Models\Post::inRandomOrder()->first()->delete();
 
-//$updatepost = Post::find(9);
-//$updatepost->delete();
+$tags = [];
+for ($i =1; $i <= 10; $i++) {
+    $tags[] =  [
+        'title' => 'title-teg ' . $i,
+        'slug' => 'title-slug ' . $i,
+        'created_at' => date('Y-m-d H-i-s'),
+        'updated_at' => date('Y-m-d H-i-s'),
+    ];
+}
 
-//$dataTags = [
-//    'title' => 'Title10',
-//    'slug' => 'Slug10',
-//];
-//
-//$post = Tag:: create($dataTags);
+\Hillel\Models\Tag::insert($tags);
 
-//$category = Category::find(25);
-//
-//echo "<pre>";
-//var_dump($category->post-> title);
-//echo "<pre>";
+$tags = \Hillel\Models\Tag::all();
 
-//$category = Category::find(27);
-//foreach ($category->posts as $post) {
-//    echo $post->title;
-//}
+$posts = \Hillel\Models\Post::all();
 
-//$post = Post::find(3);
-//
-//echo $post->title . "<br>";
-//
-//$post->category->title . ' ' . $post->category->slug;
+foreach ($posts as $pos) {
+    $tagsIds = $tags->pluck('id')->random(3);
 
-//$category = Category::find(27);
-//
-//foreach ($category->posts as $post){
-//    echo $post->title . '<br>';
-//    foreach ($post->tags as $tag) {
-//        echo $tag->title . ' ';
-//    }
-//}
-
-//$tag = Tag::find(2);
-//
-//foreach ($tag->posts as $post){
-//    echo $post->title . '<br>';
-//    foreach ($post->tags as $tag) {
-//        echo $tag->title . ' ';
-//    }
-//}
-
-//$tags = Tag::all();
+    $post->tags()->sync($tagsIds);
+}
